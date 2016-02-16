@@ -1,8 +1,11 @@
 package fileSearcher
 
+import java.io.File
+
 trait IOObject {
-  val name: String
+  val file: File
+  val name = file.getName
 }
 
-class FileObject(val name: String) extends IOObject
-class DirectoryObject(val name: String) extends IOObject
+case class FileObject(file: File) extends IOObject
+case class DirectoryObject(file: File) extends IOObject
