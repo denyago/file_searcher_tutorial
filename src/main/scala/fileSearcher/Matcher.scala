@@ -1,17 +1,26 @@
 package fileSearcher
 
 import java.io.File
+import scala.annotation.tailrec
 
 class Matcher(filter: String, val rootLocation: String = new File(".").getCanonicalPath) {
   val rootIOObject = FileConverter.convertToIOObject(new File(rootLocation))
 
   def execute(): List[String] = {
-    val matchedFiles = rootIOObject match {
-      case file      :  FileObject      if FilterChecker(filter).matches(file.name) => List(file)
-      case directory :  DirectoryObject                                             => FilterChecker(filter).findMatchedFiles(directory.children())
-      case _                                                                        => List()
+
+    @tailrec
+    def recurciveMatch(files: List[IOObject], matches: List[FileObject]): List[FileObject] = {
+      files match {
+        case List()           => matches
+        case iOObject :: rest =>
+          iOObject match {
+            case file      : FileObject if FilterChecker(filter).matches(file.name) => recurciveMatch(rest, file :: matches)
+            case directory : DirectoryObject => recurciveMatch(rest ::: directory.children(), matches)
+            case _         => recurciveMatch(rest, matches)
+          }
+      }
     }
 
-    matchedFiles map(iOObject => iOObject.name)
+    recurciveMatch(List(rootIOObject), List()).map(iOObject => iOObject.name)
   }
 }
