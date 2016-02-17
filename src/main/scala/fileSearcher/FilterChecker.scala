@@ -4,25 +4,35 @@ import java.io.File
 import scala.util.control.NonFatal
 
 class FilterChecker(filter: String) {
+  val filterAsRegex = filter.r
 
-  def matchesFileContent(file: File): Boolean = {
+  def matchesFileContentCount(file: File): Int = {
     import scala.io.Source
+
+    def getFilterMatchCount(content: String): Int =
+      (filterAsRegex findAllIn content).length
 
     try{
       val fileSource = Source.fromFile(file)
       try
-        fileSource.getLines().exists(line=>matches(line))
+        fileSource.getLines().foldLeft(0)(
+          (accumulator, line) => accumulator + getFilterMatchCount(line)
+        )
       catch {
-         case NonFatal(_) => false
+         case NonFatal(_) => 0
        }
       finally
         fileSource.close()
     } catch {
-      case NonFatal(_) => false
+      case NonFatal(_) => 0
     }
   }
 
-  def matches(content: String): Boolean = content contains filter
+  def matches(content: String): Boolean =
+    filterAsRegex findFirstMatchIn content match {
+      case Some(_) => true
+      case None    => false
+    }
   
   def findMatchedFiles(iOObjects: List[IOObject]): List[IOObject] =
     for(iOObject <- iOObjects

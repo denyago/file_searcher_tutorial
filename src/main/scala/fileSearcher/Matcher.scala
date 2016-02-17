@@ -24,11 +24,10 @@ class Matcher(filter: String, val rootLocation: String = new File(".").getCanoni
 
     def contentMatch(files: List[FileObject]) = {
       contentFilter match {
-        case Some(dataFilter) => files.filter(iOObject => FilterChecker(dataFilter).matchesFileContent(iOObject.file))
+        case Some(dataFilter) => files.filter(iOObject => FilterChecker(dataFilter).matchesFileContentCount(iOObject.file) > 0)
         case None             => files
       }
     }
-
 
     contentMatch(nameMatch(List(rootIOObject), List())).map(iOObject => iOObject.name)
   }
