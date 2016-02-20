@@ -3,9 +3,20 @@ package fileSearcher
 import java.io.File
 import scala.annotation.tailrec
 
-class Matcher(filter: String, val rootLocation: String = new File(".").getCanonicalPath,
-              contentFilter: Option[String] = None) {
+class Matcher(val filter: String, val rootLocation: String = new File(".").getCanonicalPath,
+              val contentFilter: Option[String] = None) {
   val rootIOObject = FileConverter.convertToIOObject(new File(rootLocation))
+
+  override def hashCode: Int = List(filter, rootLocation, contentFilter).
+    flatMap((field)=> field.toString.getBytes).
+    foldLeft(0)((acc, b) => acc + b.toInt)
+  override def equals(other: Any): Boolean = other match {
+    case that: Matcher =>
+      filter == that.filter &&
+        rootLocation == that.rootLocation &&
+        contentFilter == that.contentFilter
+    case _ => false
+  }
 
   def execute(): List[(String, Option[Int])] = {
 

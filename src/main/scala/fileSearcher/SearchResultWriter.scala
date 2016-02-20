@@ -3,18 +3,22 @@ package fileSearcher
 import java.io.PrintWriter
 
 object SearchResultWriter {
+  private def formattedResult(result: (String, Option[Int])): String = result match {
+    case (fileName, Some(number)) => s"$fileName:$number"
+    case (fileName, None)         => fileName
+  }
+
+  private def joinedLines(searchResults: List[(String, Option[Int])]) = searchResults.foldLeft("")(
+    (str, result) => str + formattedResult(result) + "\n")
+
+  def writeToConsole(searchResults: List[(String, Option[Int])]): Unit = {
+    { System.out.print(joinedLines(searchResults)) }
+  }
+
   def writeToFile(filePath: String, searchResults: List[(String, Option[Int])]): Unit = {
-    def formattedResult(result: (String, Option[Int])): String = result match {
-      case (fileName, Some(number)) => s"$fileName:$number"
-      case (fileName, None)         => fileName
-    }
-
-    def joinedLines = searchResults.foldLeft("")(
-      (str, result) => str + formattedResult(result) + "\n")
-
     {
       new PrintWriter(filePath) {
-        write(joinedLines)
+        write(joinedLines(searchResults))
         close()
       }
     }
