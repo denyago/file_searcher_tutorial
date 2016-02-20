@@ -7,7 +7,7 @@ class Matcher(filter: String, val rootLocation: String = new File(".").getCanoni
               contentFilter: Option[String] = None) {
   val rootIOObject = FileConverter.convertToIOObject(new File(rootLocation))
 
-  def execute(): List[String] = {
+  def execute(): List[(String, Option[Int])] = {
 
     @tailrec
     def nameMatch(files: List[IOObject], matches: List[FileObject]): List[FileObject] = {
@@ -24,11 +24,15 @@ class Matcher(filter: String, val rootLocation: String = new File(".").getCanoni
 
     def contentMatch(files: List[FileObject]) = {
       contentFilter match {
-        case Some(dataFilter) => files.filter(iOObject => FilterChecker(dataFilter).matchesFileContentCount(iOObject.file) > 0)
-        case None             => files
+        case Some(dataFilter) =>
+          files.map(iOObject =>
+            (iOObject, Some(
+              FilterChecker(dataFilter).matchesFileContentCount(iOObject.file))))
+            .filter(tuple => tuple._2.getOrElse(0) > 0)
+        case None             => files.map(iOObject => (iOObject, None))
       }
     }
 
-    contentMatch(nameMatch(List(rootIOObject), List())).map(iOObject => iOObject.name)
+    contentMatch(nameMatch(List(rootIOObject), List())).map {case (iOObject, count) => (iOObject.name, count)}
   }
 }

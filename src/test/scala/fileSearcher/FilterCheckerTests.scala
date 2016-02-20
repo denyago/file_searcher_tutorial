@@ -20,11 +20,11 @@ class FilterCheckerTests extends FlatSpec {
     assert(matchedFiles.length == 0)
   }
 
-  "FilterChecker passed a file with content that once matches the filter" should
-  "return that it matched 1 time" in {
+  "FilterChecker passed a file with content that matches the filter" should
+  "return that it matched 3 times" in {
     val contentMatchedTimes = FilterChecker("content test")
                                  .matchesFileContentCount(new File("src/test/resources/testfiles/content_tests.data"))
-    assert(contentMatchedTimes == 1)
+    assert(contentMatchedTimes == 3)
   }
 
   "FilterChecker passed a file with content that does not match the filter" should
