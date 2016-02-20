@@ -5,6 +5,7 @@ import java.io.File
 trait IOObject {
   val file: File
   val name = file.getName
+  val path = file.getCanonicalPath
 }
 
 case class FileObject(file: File) extends IOObject

@@ -44,6 +44,6 @@ class Matcher(val filter: String, val rootLocation: String = new File(".").getCa
       }
     }
 
-    contentMatch(nameMatch(List(rootIOObject), List())).map {case (iOObject, count) => (iOObject.name, count)}
+    contentMatch(nameMatch(List(rootIOObject), List())).map {case (iOObject, count) => (iOObject.path, count)}
   }
 }
