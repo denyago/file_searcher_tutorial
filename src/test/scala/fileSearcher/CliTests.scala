@@ -24,9 +24,17 @@ class CliTests extends FlatSpec{
     assert(matcherFromCliRunner(args) == new Matcher("passwd", "/tmp", Option("root")))
   }
 
-  "CliRunner when more then three arguments passed" should
+  "CliRunner when four arguments passed" should
     "return FilterChecker with filter, root path and content filter" in {
-    val args   = Array("passwd", "/tmp", "root", "foo", "bar", "xyz")
-    assert(matcherFromCliRunner(args) == new Matcher("passwd", "/tmp", Option("root")))
+    val mBytes = 5
+    val args   = Array("passwd", "/tmp", "root", mBytes.toString)
+    assert(matcherFromCliRunner(args) == new Matcher("passwd", "/tmp", Option("root"), mBytes))
+  }
+
+  "CliRunner when more then four arguments passed" should
+    "return FilterChecker with filter, root path and content filter" in {
+    val mBytes = 5
+    val args   = Array("passwd", "/tmp", "root", mBytes.toString, "bar", "xyz")
+    assert(matcherFromCliRunner(args) == new Matcher("passwd", "/tmp", Option("root"), mBytes))
   }
 }

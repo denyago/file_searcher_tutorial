@@ -9,19 +9,21 @@ import scala.annotation.tailrec
   * @param filter pattern to search in file names.
   * @param rootLocation directory to recursively search from. Defaults to current work directory.
   * @param contentFilter filters files contents. Omitted if not specified.
+  * @param maxFileSize maximum file size to do a content filtering in Megabytes
   */
 class Matcher(val filter: String, val rootLocation: String = new File(".").getCanonicalPath,
-              val contentFilter: Option[String] = None) {
+              val contentFilter: Option[String] = None, val maxFileSize: Double = 10) {
   val rootIOObject = FileConverter.convertToIOObject(new File(rootLocation))
 
-  override def hashCode: Int = List(filter, rootLocation, contentFilter).
-    flatMap(f = (field) => field.toString.getBytes).
+  override def hashCode: Int = List(filter, rootLocation, contentFilter, maxFileSize).
+    flatMap(_.toString.getBytes).
     foldLeft(0)((acc, b) => acc + b.toInt)
   override def equals(other: Any): Boolean = other match {
     case that: Matcher =>
       filter == that.filter &&
         rootLocation == that.rootLocation &&
-        contentFilter == that.contentFilter
+        contentFilter == that.contentFilter &&
+        maxFileSize == that.maxFileSize
     case _ => false
   }
 
@@ -43,10 +45,13 @@ class Matcher(val filter: String, val rootLocation: String = new File(".").getCa
     def contentMatch(files: List[FileObject]) = {
       contentFilter match {
         case Some(dataFilter) =>
-          files.map(iOObject =>
+          files.par.
+            filter(iOObject => iOObject.fileSize < maxFileSize).
+            map(iOObject =>
             (iOObject, Some(
               FilterChecker(dataFilter).matchesFileContentCount(iOObject.file))))
-            .filter {case (_, occurrences) => occurrences.getOrElse(0) > 0}
+            .filter({case (_, occurrences) => occurrences.getOrElse(0) > 0})
+            .toList
         case None             => files.map(iOObject => (iOObject, None))
       }
     }

@@ -7,6 +7,15 @@ trait IOObject {
   val file: File
   val name = file.getName
   val path = file.getCanonicalPath
+
+  /**
+    * Size of file in Megabytes
+    * @return MB
+    */
+  def fileSize: Double = Try(file.length() / 1e6) match {
+    case Success(s) => s
+    case Failure(_) => 0
+  }
 }
 
 case class FileObject(file: File) extends IOObject

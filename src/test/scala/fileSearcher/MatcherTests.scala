@@ -50,13 +50,22 @@ class MatcherTests extends FlatSpec{
     assert(results == List())
   }
 
+  "Matcher given a path that has files > 10MB that match file filter and content filter" should
+    "return an empty list" in {
+    val matcher = new Matcher("bin", testFilesDirPath, Some("content test"))
+    val results = matcher.execute()
+    assert(results == List())
+  }
+
+  val mBytes = 5
+
   "Two Matchers with same settings" should
   "have same hashCode" in {
-    assert(new Matcher("a", "b", Option("c")).hashCode == new Matcher("a", "b", Option("c")).hashCode)
+    assert(new Matcher("a", "b", Option("c"), mBytes).hashCode == new Matcher("a", "b", Option("c"), mBytes).hashCode)
   }
 
   "Two Matchers with same settings" should
   "be equal" in {
-    assert(new Matcher("a", "b", Option("c")) == new Matcher("a", "b", Option("c")))
+    assert(new Matcher("a", "b", Option("c"), mBytes) == new Matcher("a", "b", Option("c"), mBytes))
   }
 }
