@@ -8,7 +8,7 @@ import org.scalatest.FlatSpec
 
 class SearchResultWriterTests  extends FlatSpec{
 
-  def randomFilePath: String = s"src/test/resources/tmp/${System.currentTimeMillis() / 1000L}.dat"
+  def randomFilePath: String = s"src/test/resources/tmp_${System.currentTimeMillis() / 1000L}.dat"
 
   "SearchResultWriter when results passed" should
   "save them to a file in a filesystem" in {
