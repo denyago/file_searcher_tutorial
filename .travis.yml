@@ -1,0 +1,12 @@
+language: scala
+
+scala:
+  - 2.11.7
+
+jdk:
+  - oraclejdk8
+
+script:
+  - sbt ++2.11.7 test
+  - sbt ++2.11.7 scalastyle
+  - sbt ++2.11.7 test:scalastyle

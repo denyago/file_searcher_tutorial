@@ -33,7 +33,7 @@ class FilterChecker(filter: String) {
       case Some(_) => true
       case None    => false
     }
-  
+
   def findMatchedFiles(iOObjects: List[IOObject]): List[IOObject] =
     for(iOObject <- iOObjects
         if iOObject.isInstanceOf[FileObject]
