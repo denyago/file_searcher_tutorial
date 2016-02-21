@@ -3,6 +3,7 @@ package fileSearcher
 import java.nio.file.Files
 import java.io.File
 import scala.io.Source
+import scala.util.{Failure, Success, Try}
 
 import org.scalatest.FlatSpec
 
@@ -19,13 +20,14 @@ class SearchResultWriterTests  extends FlatSpec{
 
     val file = new File(fileName)
     val fileSource = Source.fromFile(file)
-    val lines = fileSource.getLines().toList
+    val lines = Try(fileSource.getLines().toList)
 
-    try {
-      assert(lines == List("readme.txt:3", "license.txt"))
-    } finally {
-      fileSource.close()
-      Files.delete(file.toPath)
+    fileSource.close()
+    Files.delete(file.toPath)
+
+    lines match {
+      case Success(lns) => assert(lns == List("readme.txt:3", "license.txt"))
+      case Failure(err) => throw err
     }
   }
 }

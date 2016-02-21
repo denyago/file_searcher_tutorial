@@ -15,7 +15,7 @@ class Matcher(val filter: String, val rootLocation: String = new File(".").getCa
   val rootIOObject = FileConverter.convertToIOObject(new File(rootLocation))
 
   override def hashCode: Int = List(filter, rootLocation, contentFilter).
-    flatMap((field)=> field.toString.getBytes).
+    flatMap(f = (field) => field.toString.getBytes).
     foldLeft(0)((acc, b) => acc + b.toInt)
   override def equals(other: Any): Boolean = other match {
     case that: Matcher =>
@@ -46,7 +46,7 @@ class Matcher(val filter: String, val rootLocation: String = new File(".").getCa
           files.map(iOObject =>
             (iOObject, Some(
               FilterChecker(dataFilter).matchesFileContentCount(iOObject.file))))
-            .filter(tuple => tuple._2.getOrElse(0) > 0)
+            .filter {case (_, occurrences) => occurrences.getOrElse(0) > 0}
         case None             => files.map(iOObject => (iOObject, None))
       }
     }

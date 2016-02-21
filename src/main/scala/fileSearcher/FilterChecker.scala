@@ -1,30 +1,30 @@
 package fileSearcher
 
 import java.io.File
-import scala.util.control.NonFatal
+import scala.io.{Source, BufferedSource}
+import scala.util.{Try, Success, Failure}
 
 class FilterChecker(filter: String) {
   val filterAsRegex = filter.r
 
   def matchesFileContentCount(file: File): Int = {
-    import scala.io.Source
-
     def getFilterMatchCount(content: String): Int =
       (filterAsRegex findAllIn content).length
 
-    try{
-      val fileSource = Source.fromFile(file)
-      try
-        fileSource.getLines().foldLeft(0)(
+    def fileContentOccurances(fs: BufferedSource): Int =
+      fs.getLines().foldLeft(0)(
           (accumulator, line) => accumulator + getFilterMatchCount(line)
         )
-      catch {
-         case NonFatal(_) => 0
-       }
-      finally
-        fileSource.close()
-    } catch {
-      case NonFatal(_) => 0
+
+    val fileSource = Try(Source.fromFile(file))
+    fileSource match {
+      case Success(fs) => {
+        Try(fileContentOccurances(fs)) match {
+          case Success(n) => n
+          case Failure(_) => 0
+        }
+      }
+      case Failure(_) => 0
     }
   }
 

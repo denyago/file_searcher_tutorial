@@ -49,4 +49,14 @@ class MatcherTests extends FlatSpec{
     val results = matcher.execute()
     assert(results == List())
   }
+
+  "Two Matchers with same settings" should
+  "have same hashCode" in {
+    assert(new Matcher("a", "b", Option("c")).hashCode == new Matcher("a", "b", Option("c")).hashCode)
+  }
+
+  "Two Matchers with same settings" should
+  "be equal" in {
+    assert(new Matcher("a", "b", Option("c")) == new Matcher("a", "b", Option("c")))
+  }
 }
