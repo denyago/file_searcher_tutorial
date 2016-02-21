@@ -12,7 +12,7 @@ class MatcherTests extends FlatSpec{
   "return a list with that file name" in {
     val matcher = new Matcher("fake", "fakePath")
     val results = matcher.execute()
-    val path = (new File(".").getCanonicalPath) + "/fakePath"
+    val path = new File(".").getCanonicalPath + "/fakePath"
     assert(results == List((path, None)))
   }
 

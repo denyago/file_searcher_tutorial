@@ -3,6 +3,13 @@ package fileSearcher
 import java.io.File
 import scala.annotation.tailrec
 
+/**
+  * Matches matches
+  *
+  * @param filter pattern to search in file names.
+  * @param rootLocation directory to recursively search from. Defaults to current work directory.
+  * @param contentFilter filters files contents. Omitted if not specified.
+  */
 class Matcher(val filter: String, val rootLocation: String = new File(".").getCanonicalPath,
               val contentFilter: Option[String] = None) {
   val rootIOObject = FileConverter.convertToIOObject(new File(rootLocation))

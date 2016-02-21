@@ -36,8 +36,8 @@ class FilterChecker(filter: String) {
   
   def findMatchedFiles(iOObjects: List[IOObject]): List[IOObject] =
     for(iOObject <- iOObjects
-        if(iOObject.isInstanceOf[FileObject])
-        if(matches(iOObject.name)))
+        if iOObject.isInstanceOf[FileObject]
+        if matches(iOObject.name))
     yield iOObject
 }
 
